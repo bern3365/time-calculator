@@ -1,69 +1,87 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Time Calculator</title>
+  <title>Time Calculator for Mum</title>
+
+  <!-- Custom icon for mobile shortcut -->
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+
   <style>
     body {
       font-family: "Segoe UI", sans-serif;
+      background: #f9f9f9;
+      margin: 0;
       padding: 20px;
       max-width: 400px;
       margin: auto;
-      background: #f7f7f7;
-      color: #333;
     }
+
     h2 {
       text-align: center;
-      color: #4a90e2;
+      color: #2e8bc0;
     }
+
     label {
+      display: block;
       margin-top: 20px;
       font-size: 16px;
     }
+
     input[type="time"] {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       font-size: 16px;
-      margin-top: 5px;
+      margin-top: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
+
     button {
       margin-top: 25px;
       padding: 12px;
       width: 100%;
       font-size: 16px;
-      background-color: #4a90e2;
+      background-color: #2e8bc0;
       color: white;
       border: none;
       border-radius: 6px;
     }
+
     button:hover {
-      background-color: #357abd;
+      background-color: #1c6ea4;
     }
+
     .output {
       margin-top: 25px;
-      background: #ffffff;
+      background: white;
       padding: 15px;
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
+
     p {
       font-size: 16px;
+      margin: 8px 0;
     }
   </style>
 </head>
 <body>
   <h2>Time Calculator</h2>
-  
-  <label for="startTime">Start Time:</label>
-  <input type="time" id="startTime">
 
-  <label for="endTime">End Time:</label>
-  <input type="time" id="endTime">
+  <label for="startTime">Start Time (24H):</label>
+  <input type="time" id="startTime" required>
+
+  <label for="endTime">End Time (24H):</label>
+  <input type="time" id="endTime" required>
 
   <button onclick="calculateTime()">Calculate</button>
 
   <div class="output">
-    <p id="adjustedTimes">Adjusted times will appear here.</p>
+    <p id="adjustedStart"></p>
+    <p id="adjustedEnd"></p>
     <p id="elapsedHours"></p>
   </div>
 
@@ -74,20 +92,24 @@
     }
 
     function calculateTime() {
-      const startInput = document.getElementById('startTime').value;
-      const endInput = document.getElementById('endTime').value;
+      const startVal = document.getElementById('startTime').value;
+      const endVal = document.getElementById('endTime').value;
 
-      if (!startInput || !endInput) {
+      if (!startVal || !endVal) {
         alert("Please enter both start and end times.");
         return;
       }
 
-      const today = new Date();
-      const [startH, startM] = startInput.split(':').map(Number);
-      const [endH, endM] = endInput.split(':').map(Number);
+      const [startH, startM] = startVal.split(":").map(Number);
+      const [endH, endM] = endVal.split(":").map(Number);
 
-      let startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), startH, startM);
-      let endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), endH, endM);
+      const now = new Date();
+      let startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startH, startM);
+      let endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endH, endM);
+
+      if (endDate <= startDate) {
+        endDate.setDate(endDate.getDate() + 1);
+      }
 
       startDate.setMinutes(startDate.getMinutes() - 30);
       endDate.setMinutes(endDate.getMinutes() + 30);
@@ -98,11 +120,14 @@
       const diffMs = roundedEnd - roundedStart;
       const hours = (diffMs / (1000 * 60 * 60)).toFixed(2);
 
-      document.getElementById('adjustedTimes').textContent = 
-        `Adjusted Start: ${roundedStart.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}, 
-         Adjusted End: ${roundedEnd.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+      document.getElementById("adjustedStart").textContent =
+        `Adjusted Start: ${roundedStart.getHours().toString().padStart(2, '0')}:${roundedStart.getMinutes().toString().padStart(2, '0')}`;
 
-      document.getElementById('elapsedHours').textContent = `Total Hours Elapsed: ${hours}`;
+      document.getElementById("adjustedEnd").textContent =
+        `Adjusted End: ${roundedEnd.getHours().toString().padStart(2, '0')}:${roundedEnd.getMinutes().toString().padStart(2, '0')}`;
+
+      document.getElementById("elapsedHours").textContent =
+        `Total Hours: ${hours}`;
     }
   </script>
 </body>
