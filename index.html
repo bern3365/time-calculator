@@ -1,54 +1,143 @@
-<script>
-  function roundToNearest15(date) {
-    const ms = 1000 * 60 * 15;
-    return new Date(Math.round(date.getTime() / ms) * ms);
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Time Calculator for Mum</title>
 
-  function formatTo12Hour(date) {
-    let hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // convert 0 to 12
-    return `${hours}:${minutes} ${ampm}`;
-  }
+  <!-- Custom icon for mobile shortcut -->
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
 
-  function calculateTime() {
-    const startVal = document.getElementById('startTime').value;
-    const endVal = document.getElementById('endTime').value;
-
-    if (!startVal || !endVal) {
-      alert("Please enter both start and end times.");
-      return;
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
     }
 
-    const [startH, startM] = startVal.split(":").map(Number);
-    const [endH, endM] = endVal.split(":").map(Number);
-
-    const now = new Date();
-    let startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startH, startM);
-    let endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endH, endM);
-
-    if (endDate <= startDate) {
-      endDate.setDate(endDate.getDate() + 1);
+    h2 {
+      text-align: center;
+      color: #2e8bc0;
     }
 
-    startDate.setMinutes(startDate.getMinutes() - 30);
-    endDate.setMinutes(endDate.getMinutes() + 30);
+    label {
+      display: block;
+      margin-top: 20px;
+      font-size: 16px;
+    }
 
-    const roundedStart = roundToNearest15(startDate);
-    const roundedEnd = roundToNearest15(endDate);
+    input[type="time"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-top: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
 
-    const diffMs = roundedEnd - roundedStart;
-    const hours = (diffMs / (1000 * 60 * 60)).toFixed(2);
+    button {
+      margin-top: 25px;
+      padding: 12px;
+      width: 100%;
+      font-size: 16px;
+      background-color: #2e8bc0;
+      color: white;
+      border: none;
+      border-radius: 6px;
+    }
 
-    document.getElementById("adjustedStart").textContent =
+    button:hover {
+      background-color: #1c6ea4;
+    }
+
+    .output {
+      margin-top: 25px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    p {
+      font-size: 16px;
+      margin: 8px 0;
+    }
+  </style>
+</head>
+<body>
+  <h2>Time Sheet Calculator</h2>
+
+  <label for="startTime">Start Time:</label>
+  <input type="time" id="startTime" required>
+
+  <label for="endTime">End Time:</label>
+  <input type="time" id="endTime" required>
+
+  <button onclick="calculateTime()">Calculate</button>
+
+  <div class="output">
+    <p id="adjustedStart"></p>
+    <p id="adjustedEnd"></p>
+    <p id="elapsedHours"></p>
+  </div>
+
+  <script>
+    function roundToNearest15(date) {
+      const ms = 1000 * 60 * 15;
+      return new Date(Math.round(date.getTime() / ms) * ms);
+    }
+
+    function formatTo12Hour(date) {
+      let hours = date.getHours();
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // convert 0 to 12
+      return `${hours}:${minutes} ${ampm}`;
+    }
+
+    function calculateTime() {
+      const startVal = document.getElementById('startTime').value;
+      const endVal = document.getElementById('endTime').value;
+
+      if (!startVal || !endVal) {
+        alert("Please enter both start and end times.");
+        return;
+      }
+
+      const [startH, startM] = startVal.split(":").map(Number);
+      const [endH, endM] = endVal.split(":").map(Number);
+
+      const now = new Date();
+      let startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startH, startM);
+      let endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endH, endM);
+
+      if (endDate <= startDate) {
+        endDate.setDate(endDate.getDate() + 1);
+      }
+
+      startDate.setMinutes(startDate.getMinutes() - 30);
+      endDate.setMinutes(endDate.getMinutes() + 30);
+
+      const roundedStart = roundToNearest15(startDate);
+      const roundedEnd = roundToNearest15(endDate);
+
+      const diffMs = roundedEnd - roundedStart;
+      const hours = (diffMs / (1000 * 60 * 60)).toFixed(2);
+
+      document.getElementById("adjustedStart").textContent =
       `Adjusted Start: ${formatTo12Hour(roundedStart)}`;
 
-    document.getElementById("adjustedEnd").textContent =
+      document.getElementById("adjustedEnd").textContent =
       `Adjusted End: ${formatTo12Hour(roundedEnd)}`;
 
-    document.getElementById("elapsedHours").textContent =
+      document.getElementById("elapsedHours").textContent =
       `Total Hours: ${hours}`;
-  }
-</script>
+    }
+  </script>
+</body>
+</html>
