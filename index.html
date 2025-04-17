@@ -69,12 +69,12 @@
   </style>
 </head>
 <body>
-  <h2>Time Calculator</h2>
+  <h2>Time Sheet Calculator</h2>
 
-  <label for="startTime">Start Time (24H):</label>
+  <label for="startTime">Start Time:</label>
   <input type="time" id="startTime" required>
 
-  <label for="endTime">End Time (24H):</label>
+  <label for="endTime">End Time:</label>
   <input type="time" id="endTime" required>
 
   <button onclick="calculateTime()">Calculate</button>
@@ -121,10 +121,10 @@
       const hours = (diffMs / (1000 * 60 * 60)).toFixed(2);
 
       document.getElementById("adjustedStart").textContent =
-        `Adjusted Start: ${roundedStart.getHours().toString().padStart(2, '0')}:${roundedStart.getMinutes().toString().padStart(2, '0')}`;
+       `Adjusted Start: ${formatTo12Hour(roundedStart)}`;
 
       document.getElementById("adjustedEnd").textContent =
-        `Adjusted End: ${roundedEnd.getHours().toString().padStart(2, '0')}:${roundedEnd.getMinutes().toString().padStart(2, '0')}`;
+        `Adjusted End: ${formatTo12Hour(roundedEnd)}`;
 
       document.getElementById("elapsedHours").textContent =
         `Total Hours: ${hours}`;
